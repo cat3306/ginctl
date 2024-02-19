@@ -31,6 +31,14 @@ const (
 	updateMethodTemplateFile              = "interface-update.tpl"
 	varTemplateFile                       = "var.tpl"
 	errTemplateFile                       = "err.tpl"
+	tagGormTemplateFile                   = "gorm-tag.tpl"
+	importGormTemplateFile                = "gorm-import.tpl"
+	typesGormTemplateFile                 = "gorm-types.tpl"
+	modelGormGenTemplateFile              = "gorm-model-gen.tpl"
+	errGormTemplateFile                   = "gorm-err.tpl"
+	methodGormTemplateFile                = "gorm-method.tpl"
+	findGormOneByFieldTemplateFile        = "gorm-find-one-by-field.tpl"
+	modelGormCustomTemplateFile           = "gorm-custom-model.tpl"
 )
 
 var templates = map[string]string{
@@ -56,6 +64,14 @@ var templates = map[string]string{
 	updateMethodTemplateFile:              template.UpdateMethod,
 	varTemplateFile:                       template.Vars,
 	errTemplateFile:                       template.Error,
+	tagGormTemplateFile:                   template.GormTag,
+	importGormTemplateFile:                template.GormImports,
+	modelGormGenTemplateFile:              template.GormModelGen,
+	errGormTemplateFile:                   template.GormError,
+	methodGormTemplateFile:                template.GormMethod,
+	findGormOneByFieldTemplateFile:        template.GormFindOneByField,
+	typesGormTemplateFile:                 template.GormTypes,
+	modelGormCustomTemplateFile:           template.GormModelCustom,
 }
 
 // Category returns model const value

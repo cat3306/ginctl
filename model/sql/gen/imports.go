@@ -41,3 +41,19 @@ func genImports(table Table, withCache, timeImport bool) (string, error) {
 
 	return buffer.String(), nil
 }
+
+func gormGenImports(timeImport bool) (string, error) {
+	text, err := pathx.LoadTemplate(category, importGormTemplateFile, template.GormImports)
+	if err != nil {
+		return "", err
+	}
+
+	buffer, err := util.With("import").Parse(text).Execute(map[string]any{
+		"time": false, //use JsonTime not need import time.Time more details see gorm-err.tpl
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
+}

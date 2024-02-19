@@ -51,6 +51,8 @@ var (
 	VarBoolStrict bool
 	// VarStringSliceIgnoreColumns represents the columns which are ignored.
 	VarStringSliceIgnoreColumns []string
+
+	VarStringMode string
 )
 
 var errNotMatched = errors.New("sql not matched")
@@ -67,6 +69,7 @@ func MysqlDDL(_ *cobra.Command, _ []string) error {
 	home := VarStringHome
 	remote := VarStringRemote
 	branch := VarStringBranch
+	mode := VarStringMode
 	if len(remote) > 0 {
 		repo, _ := file.CloneIntoGitHome(remote, branch)
 		if len(repo) > 0 {
@@ -90,6 +93,7 @@ func MysqlDDL(_ *cobra.Command, _ []string) error {
 		database:      database,
 		strict:        VarBoolStrict,
 		ignoreColumns: mergeColumns(VarStringSliceIgnoreColumns),
+		mode:          mode,
 	}
 	return fromDDL(arg)
 }
@@ -105,6 +109,7 @@ func MySqlDataSource(_ *cobra.Command, _ []string) error {
 	home := VarStringHome
 	remote := VarStringRemote
 	branch := VarStringBranch
+	mode := VarStringMode
 	if len(remote) > 0 {
 		repo, _ := file.CloneIntoGitHome(remote, branch)
 		if len(repo) > 0 {
@@ -131,6 +136,7 @@ func MySqlDataSource(_ *cobra.Command, _ []string) error {
 		idea:          idea,
 		strict:        VarBoolStrict,
 		ignoreColumns: mergeColumns(VarStringSliceIgnoreColumns),
+		mode:          mode,
 	}
 	return fromMysqlDataSource(arg)
 }
@@ -226,6 +232,7 @@ type ddlArg struct {
 	database      string
 	strict        bool
 	ignoreColumns []string
+	mode          string
 }
 
 func fromDDL(arg ddlArg) error {
@@ -243,15 +250,25 @@ func fromDDL(arg ddlArg) error {
 	if len(files) == 0 {
 		return errNotMatched
 	}
-
-	generator, err := gen.NewDefaultGenerator(arg.dir, arg.cfg,
-		gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	var (
+		generator gen.Generator
+	)
+	switch arg.mode {
+	case "":
+		generator, err = gen.NewDefaultGenerator(arg.dir, arg.cfg,
+			gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	case "gorm":
+		generator, err = gen.NewGormGenerator(arg.dir, arg.cfg,
+			gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	default:
+		return errors.New("invalid mode only support [gorm]")
+	}
 	if err != nil {
 		return err
 	}
 
-	for _, file := range files {
-		err = generator.StartFromDDL(file, arg.cache, arg.strict, arg.database)
+	for _, f := range files {
+		err = generator.StartFromDDL(f, arg.cache, arg.strict, arg.database)
 		if err != nil {
 			return err
 		}
@@ -267,6 +284,7 @@ type dataSourceArg struct {
 	cache, idea   bool
 	strict        bool
 	ignoreColumns []string
+	mode          string
 }
 
 func fromMysqlDataSource(arg dataSourceArg) error {

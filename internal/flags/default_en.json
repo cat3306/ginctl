@@ -1,5 +1,5 @@
 {
-  "goctl": {
+  "ginctl": {
     "short": "A cli tool to generate go-zero code",
     "long": "A cli tool to generate api, zrpc, model code\n\nGitHub: https://github.com/zeromicro/go-zero\nSite:   https://go-zero.dev",
     "api": {
@@ -115,7 +115,7 @@
       }
     },
     "env": {
-      "short": "Check or edit goctl environment",
+      "short": "Check or edit ginctl environment",
       "write": "Edit goctl environment",
       "force": "Silent installation of non-existent dependencies",
       "verbose": "Enable log output",
@@ -273,7 +273,7 @@
       }
     },
     "upgrade": {
-      "short": "Upgrade goctl to latest version"
+      "short": "Upgrade ginctl to latest version"
     }
   },
   "global": {

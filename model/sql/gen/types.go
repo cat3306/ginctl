@@ -35,3 +35,30 @@ func genTypes(table Table, methods string, withCache bool) (string, error) {
 
 	return output.String(), nil
 }
+
+func genGormTypes(table Table) (string, error) {
+	fields := table.Fields
+	fieldsString, err := genGormFields(table, fields)
+	if err != nil {
+		return "", err
+	}
+
+	text, err := pathx.LoadTemplate(category, typesGormTemplateFile, template.GormTypes)
+	if err != nil {
+		return "", err
+	}
+
+	output, err := util.With("types").
+		Parse(text).
+		Execute(map[string]any{
+			"upperStartCamelObject": table.Name.ToCamel(),
+			"lowerStartCamelObject": stringx.From(table.Name.ToCamel()).Untitle(),
+			"fields":                fieldsString,
+			"tableName":             table.FullName.Source(),
+		})
+	if err != nil {
+		return "", err
+	}
+
+	return output.String(), nil
+}

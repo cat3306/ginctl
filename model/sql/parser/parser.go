@@ -22,6 +22,7 @@ type (
 	Table struct {
 		Name        stringx.String
 		Db          stringx.String
+		FullName    stringx.String
 		PrimaryKey  Primary
 		UniqueIndex map[string][]*Field
 		Fields      []*Field
@@ -43,6 +44,8 @@ type (
 		SeqInIndex      int
 		OrdinalPosition int
 		ContainsPQ      bool
+		HasDefaultValue bool
+		IsTime          bool
 	}
 
 	// KeyType types alias of int
@@ -63,7 +66,7 @@ func parseNameOriginal(ts []*parser.Table) (nameOriginals [][]string) {
 }
 
 // Parse parses ddl into golang structure
-func Parse(filename, database string, strict bool) ([]*Table, error) {
+func Parse(filename, database string, strict bool, args ...bool) ([]*Table, error) {
 	p := parser.NewParser()
 	tables, err := p.From(filename)
 	if err != nil {
@@ -157,13 +160,17 @@ func Parse(filename, database string, strict bool) ([]*Table, error) {
 		}
 
 		checkDuplicateUniqueIndex(uniqueIndex, e.Name)
-
+		fullName := stringx.From(e.Name)
+		if database != "" {
+			fullName = stringx.From(database + "." + e.Name)
+		}
 		list = append(list, &Table{
 			Name:        stringx.From(e.Name),
 			Db:          stringx.From(database),
 			PrimaryKey:  primaryKey,
 			UniqueIndex: uniqueIndex,
 			Fields:      fields,
+			FullName:    fullName,
 		})
 	}
 
@@ -238,7 +245,8 @@ func convertColumns(columns []*parser.Column, primaryColumn string, strict bool)
 		field.Name = stringx.From(column.Name)
 		field.DataType = dataType
 		field.Comment = util.TrimNewLine(comment)
-
+		field.HasDefaultValue = column.Constraint.HasDefaultValue
+		field.IsTime = field.DataType == timeImport
 		if field.Name.Source() == primaryColumn {
 			primaryKey = Primary{
 				Field: field,
@@ -264,7 +272,7 @@ func (t *Table) ContainsTime() bool {
 }
 
 // ConvertDataType converts mysql data type into golang data type
-func ConvertDataType(table *model.Table, strict bool) (*Table, error) {
+func ConvertDataType(table *model.Table, strict bool, args ...bool) (*Table, error) {
 	isPrimaryDefaultNull := table.PrimaryKey.ColumnDefault == nil && table.PrimaryKey.IsNullAble == "YES"
 	isPrimaryUnsigned := strings.Contains(table.PrimaryKey.DbColumn.ColumnType, "unsigned")
 	primaryDataType, containsPQ, err := converter.ConvertStringDataType(table.PrimaryKey.DataType, isPrimaryDefaultNull, isPrimaryUnsigned, strict)
@@ -368,6 +376,8 @@ func getTableFields(table *model.Table, strict bool) (map[string]*Field, error) 
 			SeqInIndex:      columnSeqInIndex,
 			OrdinalPosition: each.OrdinalPosition,
 			ContainsPQ:      containsPQ,
+			HasDefaultValue: each.ColumnDefault != nil,
+			IsTime:          dt == timeImport,
 		}
 		fieldM[each.Name] = field
 	}

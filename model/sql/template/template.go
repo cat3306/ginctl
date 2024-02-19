@@ -127,3 +127,31 @@ var Delete string
 //
 //go:embed tpl/interface-delete.tpl
 var DeleteMethod string
+
+//go:embed tpl/gorm-import.tpl
+var GormImports string
+
+var GormModelGen = fmt.Sprintf(`%s
+package {{.pkg}}
+{{.imports}}
+{{.types}}
+{{.method}}
+`, util.DoNotEditHead)
+
+//go:embed tpl/gorm-types.tpl
+var GormTypes string
+
+//go:embed tpl/gorm-err.tpl
+var GormError string
+
+//go:embed tpl/gorm-method.tpl
+var GormMethod string
+
+//go:embed tpl/gorm-find-one-by-field.tpl
+var GormFindOneByField string
+
+//go:embed tpl/gorm-custom-model.tpl
+var GormModelCustom string
+
+//go:embed tpl/gorm-tag.tpl
+var GormTag string

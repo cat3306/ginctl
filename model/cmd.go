@@ -34,6 +34,7 @@ func init() {
 	ddlCmdFlags.StringVar(&command.VarStringHome, "home")
 	ddlCmdFlags.StringVar(&command.VarStringRemote, "remote")
 	ddlCmdFlags.StringVar(&command.VarStringBranch, "branch")
+	ddlCmdFlags.StringVarP(&command.VarStringMode, "mode", "m")
 
 	datasourceCmdFlags.StringVar(&command.VarStringURL, "url")
 	datasourceCmdFlags.StringSliceVarP(&command.VarStringSliceTable, "table", "t")
@@ -44,6 +45,7 @@ func init() {
 	datasourceCmdFlags.StringVar(&command.VarStringHome, "home")
 	datasourceCmdFlags.StringVar(&command.VarStringRemote, "remote")
 	datasourceCmdFlags.StringVar(&command.VarStringBranch, "branch")
+	datasourceCmdFlags.StringVarP(&command.VarStringMode, "mode", "m")
 
 	pgDatasourceCmdFlags.StringVar(&command.VarStringURL, "url")
 	pgDatasourceCmdFlags.StringSliceVarP(&command.VarStringSliceTable, "table", "t")
