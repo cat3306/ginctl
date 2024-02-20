@@ -9,15 +9,21 @@ import (
 const (
 	category                    = "api"
 	configTemplateFile          = "config.tpl"
+	configTypeTemplateFile      = "configtype.tpl"
 	contextTemplateFile         = "context.tpl"
 	etcTemplateFile             = "etc.tpl"
 	handlerTemplateFile         = "handler.tpl"
 	logicTemplateFile           = "logic.tpl"
 	mainTemplateFile            = "main.tpl"
+	gomodTemplateFile           = "gomod.tpl"
 	middlewareImplementCodeFile = "middleware.tpl"
 	routesTemplateFile          = "routes.tpl"
 	routesAdditionTemplateFile  = "route-addition.tpl"
 	typesTemplateFile           = "types.tpl"
+	appLogTemplateFile          = "applog.tpl"
+	routerTemplateFile          = "router.tpl"
+	customRouterTemplateFile    = "customrouter.tpl"
+	rspTemplateFile             = "rsp.tpl"
 )
 
 var templates = map[string]string{
@@ -28,8 +34,6 @@ var templates = map[string]string{
 	logicTemplateFile:           logicTemplate,
 	mainTemplateFile:            mainTemplate,
 	middlewareImplementCodeFile: middlewareImplementCode,
-	routesTemplateFile:          routesTemplate,
-	routesAdditionTemplateFile:  routesAdditionTemplate,
 	typesTemplateFile:           typesTemplate,
 }
 

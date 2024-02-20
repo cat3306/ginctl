@@ -1,26 +1,18 @@
 package main
 
 import (
+	"{{.gomod}}/applog"
+	"{{.gomod}}/config"
+	"{{.gomod}}/router"
 	"flag"
-	"fmt"
 
-	{{.importPackages}}
 )
 
-var configFile = flag.String("f", "etc/{{.serviceName}}.yaml", "the config file")
-
 func main() {
+	var file string
+	flag.StringVar(&file, "f", "", "use -f to bind config file")
 	flag.Parse()
-
-	var c config.Config
-	conf.MustLoad(*configFile, &c)
-
-	server := rest.MustNewServer(c.RestConf)
-	defer server.Stop()
-
-	ctx := svc.NewServiceContext(c)
-	handler.RegisterHandlers(server, ctx)
-
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
-	server.Start()
+	config.Init(file)
+	applog.Init()
+	router.StartGinServer()
 }

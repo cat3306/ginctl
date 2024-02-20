@@ -1,26 +1,41 @@
-package {{.PkgName}}
-
+package handler
 import (
+	"{{.gomod}}/applog"
 	"net/http"
+	"reflect"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
-	{{.ImportPackages}}
+	"github.com/gin-gonic/gin"
 )
 
-func {{.HandlerName}}(svcCtx *svc.ServiceContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		{{if .HasRequest}}var req types.{{.RequestType}}
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+type Handler interface {
+	Req() interface{}
+	Do(interface{}) (interface{}, error)
+	HttpMethod() string
+}
+
+func GinWrapper(h Handler) gin.HandlerFunc {
+	fName := reflect.Indirect(reflect.ValueOf(h)).Type().Name()
+	return func(c *gin.Context) {
+		req := h.Req()
+		var err error
+		if req != nil {
+			if h.HttpMethod() == http.MethodPost {
+				err = c.BindJSON(req)
+			} else if h.HttpMethod() == http.MethodGet {
+				err = c.BindQuery(req)
+			}
+		}
+		if err != nil {
+			applog.Logger.Sugar().Errorf("%s params invalid,err:%s", fName, err.Error())
 			return
 		}
 
-		{{end}}l := {{.LogicName}}.New{{.LogicType}}(r.Context(), svcCtx)
-		{{if .HasResp}}resp, {{end}}err := l.{{.Call}}({{if .HasRequest}}&req{{end}})
+		rsp, err := h.Do(req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			{{if .HasResp}}httpx.OkJsonCtx(r.Context(), w, resp){{else}}httpx.Ok(w){{end}}
+			applog.Logger.Sugar().Errorf("%s err:%s,req:%+v", fName, err.Error(), req)
+			RspError(c, err.Error())
+			return
 		}
+		RspOk(c, rsp)
 	}
 }

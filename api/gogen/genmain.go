@@ -2,52 +2,45 @@ package gogen
 
 import (
 	_ "embed"
-	"fmt"
-	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
 	"github.com/cat3306/ginctl/config"
-	"github.com/cat3306/ginctl/util/format"
-	"github.com/cat3306/ginctl/util/pathx"
-	"github.com/cat3306/ginctl/vars"
 )
 
 //go:embed main.tpl
 var mainTemplate string
 
+//go:embed gomod.tpl
+var gomodTemlate string
+
 func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
-	name := strings.ToLower(api.Service.Name)
-	filename, err := format.FileNamingFormat(cfg.NamingFormat, name)
-	if err != nil {
-		return err
-	}
 
-	configName := filename
-	if strings.HasSuffix(filename, "-api") {
-		filename = strings.ReplaceAll(filename, "-api", "")
-	}
-
-	return genFile(fileGenConfig{
+	err := genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          "",
-		filename:        filename + ".go",
+		filename:        "main" + ".go",
 		templateName:    "mainTemplate",
 		category:        category,
 		templateFile:    mainTemplateFile,
 		builtinTemplate: mainTemplate,
 		data: map[string]string{
-			"importPackages": genMainImports(rootPkg),
-			"serviceName":    configName,
+			"gomod": rootPkg,
 		},
 	})
-}
-
-func genMainImports(parentPkg string) string {
-	var imports []string
-	imports = append(imports, fmt.Sprintf("\"%s\"", pathx.JoinPackages(parentPkg, configDir)))
-	imports = append(imports, fmt.Sprintf("\"%s\"", pathx.JoinPackages(parentPkg, handlerDir)))
-	imports = append(imports, fmt.Sprintf("\"%s\"\n", pathx.JoinPackages(parentPkg, contextDir)))
-	imports = append(imports, fmt.Sprintf("\"%s/core/conf\"", vars.ProjectOpenSourceURL))
-	imports = append(imports, fmt.Sprintf("\"%s/rest\"", vars.ProjectOpenSourceURL))
-	return strings.Join(imports, "\n\t")
+	if err != nil {
+		return err
+	}
+	return genFile(fileGenConfig{
+		dir:             dir,
+		subdir:          "",
+		filename:        "go" + ".mod",
+		templateName:    "gomodTemlate",
+		category:        category,
+		templateFile:    gomodTemplateFile,
+		builtinTemplate: gomodTemlate,
+		data: map[string]string{
+			"gomod":     rootPkg,
+			"goversion": "1.21.5",
+		},
+	})
 }

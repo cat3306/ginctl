@@ -12,7 +12,6 @@ import (
 
 const (
 	defaultPort = 8888
-	etcDir      = "etc"
 )
 
 //go:embed etc.tpl

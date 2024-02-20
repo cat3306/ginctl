@@ -71,28 +71,6 @@ func writeProperty(writer io.Writer, name, tag, comment string, tp spec.Type, in
 	return err
 }
 
-func getAuths(api *spec.ApiSpec) []string {
-	authNames := collection.NewSet()
-	for _, g := range api.Service.Groups {
-		jwt := g.GetAnnotation("jwt")
-		if len(jwt) > 0 {
-			authNames.Add(jwt)
-		}
-	}
-	return authNames.KeysStr()
-}
-
-func getJwtTrans(api *spec.ApiSpec) []string {
-	jwtTransList := collection.NewSet()
-	for _, g := range api.Service.Groups {
-		jt := g.GetAnnotation(jwtTransKey)
-		if len(jt) > 0 {
-			jwtTransList.Add(jt)
-		}
-	}
-	return jwtTransList.KeysStr()
-}
-
 func getMiddleware(api *spec.ApiSpec) []string {
 	result := collection.NewSet()
 	for _, g := range api.Service.Groups {
