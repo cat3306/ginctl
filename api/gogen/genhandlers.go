@@ -7,8 +7,6 @@ import (
 	"github.com/cat3306/ginctl/config"
 )
 
-const defaultLogicPackage = "logic"
-
 //go:embed handler.tpl
 var handlerTemplate string
 

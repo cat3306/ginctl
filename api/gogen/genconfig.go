@@ -10,17 +10,6 @@ import (
 
 const (
 	configFile = "config"
-
-	jwtTemplate = ` struct {
-		AccessSecret string
-		AccessExpire int64
-	}
-`
-	jwtTransTemplate = ` struct {
-		Secret     string
-		PrevSecret string
-	}
-`
 )
 
 //go:embed config.tpl

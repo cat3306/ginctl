@@ -2,8 +2,6 @@ package router
 
 import (
 	"{{.gomod}}/config"
-	"{{.gomod}}/handler"
-	"{{.gomod}}/logic"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +19,4 @@ func StartGinServer() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func AutoRegister(engine *gin.Engine) {
-	{{.routersrc}}
 }

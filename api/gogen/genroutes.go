@@ -15,6 +15,9 @@ var routerTemlate string
 //go:embed customrouter.tpl
 var customRouterTemlate string
 
+//go:embed autorouter.tpl
+var autoRouterTemlate string
+
 func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
 	routerSrc := genRouterSrc(api)
 	err := genFile(fileGenConfig{
@@ -25,6 +28,22 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 		category:        category,
 		templateFile:    routerTemplateFile,
 		builtinTemplate: routerTemlate,
+		data: map[string]string{
+			"gomod": rootPkg,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	err = genFile(fileGenConfig{
+		dir:             dir,
+		subdir:          routerDir,
+		filename:        "autogenrouter" + ".go",
+		templateName:    "autoRouterTemlate",
+		category:        category,
+		templateFile:    autoRouterTemplateFile,
+		builtinTemplate: autoRouterTemlate,
 		data: map[string]string{
 			"gomod":     rootPkg,
 			"routersrc": routerSrc,
