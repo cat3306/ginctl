@@ -2,6 +2,8 @@ package gogen
 
 import (
 	_ "embed"
+	"fmt"
+	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
 	"github.com/cat3306/ginctl/config"
@@ -14,6 +16,7 @@ var routerTemlate string
 var customRouterTemlate string
 
 func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
+	routerSrc := genRouterSrc(api)
 	err := genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          routerDir,
@@ -23,7 +26,8 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 		templateFile:    routerTemplateFile,
 		builtinTemplate: routerTemlate,
 		data: map[string]string{
-			"gomod": rootPkg,
+			"gomod":     rootPkg,
+			"routersrc": routerSrc,
 		},
 	})
 	if err != nil {
@@ -39,4 +43,15 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 		builtinTemplate: customRouterTemlate,
 		data:            map[string]string{},
 	})
+}
+
+func genRouterSrc(api *spec.ApiSpec) string {
+	srcTmplate := `engine.%s("%s",handler.GinWrapper(new(logic.%s)))`
+	src := ``
+	for _, group := range api.Service.Groups {
+		for _, route := range group.Routes {
+			src += fmt.Sprintf(srcTmplate, strings.ToUpper(route.Method), route.Path, route.Handler) + "\n\n"
+		}
+	}
+	return src
 }

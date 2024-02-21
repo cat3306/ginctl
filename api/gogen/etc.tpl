@@ -1,3 +1,3 @@
-Name: {{.serviceName}}
-Host: {{.host}}
-Port: {{.port}}
+name: {{.serviceName}}
+host: {{.host}}
+port: {{.port}}

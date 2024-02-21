@@ -9,7 +9,7 @@ import (
 
 type Handler interface {
 	Req() interface{}
-	Do(interface{}) (interface{}, error)
+	Do(interface{}, *gin.Context) (interface{}, error)
 	HttpMethod() string
 }
 
@@ -27,10 +27,11 @@ func GinWrapper(h Handler) gin.HandlerFunc {
 		}
 		if err != nil {
 			applog.Logger.Sugar().Errorf("%s params invalid,err:%s", fName, err.Error())
+			RspError(c, err.Error())
 			return
 		}
 
-		rsp, err := h.Do(req)
+		rsp, err := h.Do(req, c)
 		if err != nil {
 			applog.Logger.Sugar().Errorf("%s err:%s,req:%+v", fName, err.Error(), req)
 			RspError(c, err.Error())

@@ -1,25 +1,22 @@
-package {{.pkgName}}
+package logic
 
 import (
-	{{.imports}}
+	"{{.gomod}}/types"
+
+	"github.com/gin-gonic/gin"
 )
 
-type {{.logic}} struct {
-	logx.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+type {{.handler}} struct {
 }
 
-func New{{.logic}}(ctx context.Context, svcCtx *svc.ServiceContext) *{{.logic}} {
-	return &{{.logic}}{
-		Logger: logx.WithContext(ctx),
-		ctx:    ctx,
-		svcCtx: svcCtx,
-	}
+func (h *{{.handler}}) Req() interface{} {
+	return &types.{{.request}}{}
+}
+func (h *{{.handler}}) HttpMethod() string {
+	return "{{.method}}"
 }
 
-func (l *{{.logic}}) {{.function}}({{.request}}) {{.responseType}} {
-	// todo: add your logic here and delete this line
-
-	{{.returnString}}
+func (h *{{.handler}}) Do(iReq interface{}, ctx *gin.Context) (rsp interface{}, err error) {
+	req := iReq.(*types.{{.request}})
+	return req,nil //delete it!
 }

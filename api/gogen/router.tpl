@@ -24,5 +24,5 @@ func StartGinServer() {
 }
 
 func AutoRegister(engine *gin.Engine) {
-	
+	{{.routersrc}}
 }
