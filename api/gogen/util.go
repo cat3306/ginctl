@@ -73,11 +73,17 @@ func writeProperty(writer io.Writer, name, tag, comment string, tp spec.Type, in
 
 func getMiddleware(api *spec.ApiSpec) []string {
 	result := collection.NewSet()
+	uniq := make(map[string]struct{})
 	for _, g := range api.Service.Groups {
 		middleware := g.GetAnnotation("middleware")
 		if len(middleware) > 0 {
 			for _, item := range strings.Split(middleware, ",") {
-				result.Add(strings.TrimSpace(item))
+				item = strings.TrimSpace(item)
+				_, ok := uniq[item]
+				if !ok {
+					result.Add(item)
+					uniq[item] = struct{}{}
+				}
 			}
 		}
 	}

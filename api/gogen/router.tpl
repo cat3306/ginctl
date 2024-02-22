@@ -13,8 +13,8 @@ func StartGinServer() {
 		gin.Recovery(),
 		gin.Logger(),
 	)
-	AutoRegister(engine)
 	CustomRegister(engine)
+	AutoRegister(engine)
 	err := engine.Run(fmt.Sprintf("%s:%s", config.AppConf.Host, config.AppConf.Port))
 	if err != nil {
 		panic(err)

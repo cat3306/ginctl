@@ -97,10 +97,9 @@ func DoGenProject(apiFile, dir, style, gomod string) error {
 	logx.Must(genMain(dir, rootPkg, cfg, api))
 	logx.Must(genTypes(dir, cfg, api))
 	logx.Must(genRoutes(dir, rootPkg, cfg, api))
+	logx.Must(genMiddleware(dir, cfg, api))
 	logx.Must(genHandlers(dir, rootPkg, cfg, api))
 	logx.Must(genLogic(dir, rootPkg, cfg, api))
-	//logx.Must(genMiddleware(dir, cfg, api))
-
 	if err := backupAndSweep(apiFile); err != nil {
 		return err
 	}

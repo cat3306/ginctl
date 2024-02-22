@@ -19,6 +19,7 @@ var customRouterTemlate string
 var autoRouterTemlate string
 
 func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
+
 	routerSrc := genRouterSrc(api)
 	err := genFile(fileGenConfig{
 		dir:             dir,
@@ -35,7 +36,7 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 	if err != nil {
 		return err
 	}
-
+	middlewareList := getMiddleware(api)
 	err = genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          routerDir,
@@ -44,9 +45,10 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 		category:        category,
 		templateFile:    autoRouterTemplateFile,
 		builtinTemplate: autoRouterTemlate,
-		data: map[string]string{
-			"gomod":     rootPkg,
-			"routersrc": routerSrc,
+		data: map[string]any{
+			"gomod":      rootPkg,
+			"routersrc":  routerSrc,
+			"middleware": len(middlewareList) != 0,
 		},
 	})
 	if err != nil {
@@ -65,18 +67,21 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 }
 
 func genRouterSrc(api *spec.ApiSpec) string {
+
 	srcTmplate := `%s.%s("%s",handler.GinWrapper(new(logic.%s)))`
 	groupTmplate := `
-	%s := engine.Group("%s/")
+	%s := engine.Group("%s/"%s)
 	{
 		%s
 	}
 	`
+
 	finalSrc := ``
 	for _, group := range api.Service.Groups {
 		gName := group.GetAnnotation("group")
 		gName = handlerGroupStr(gName)
 		prefix := group.GetAnnotation("prefix")
+		midd := group.GetAnnotation("middleware")
 		gPrefix := "engine"
 		src := ``
 		if gName != "" && prefix != "" {
@@ -86,11 +91,20 @@ func genRouterSrc(api *spec.ApiSpec) string {
 			src += fmt.Sprintf(srcTmplate, gPrefix, strings.ToUpper(route.Method), route.Path, StrFirstLetterUp(route.Handler)) + "\n\n"
 		}
 		if gName != "" && prefix != "" {
-			src = fmt.Sprintf(groupTmplate, gName, prefix, src)
+			midSrc := joinMiddleware(midd)
+			src = fmt.Sprintf(groupTmplate, gName, prefix, midSrc, src)
 		}
 		finalSrc += src
 	}
 	return finalSrc
+}
+func joinMiddleware(s string) string {
+	src := ``
+	ms := strings.Split(s, ",")
+	for _, v := range ms {
+		src += fmt.Sprintf(`,middleware.%s()`, v)
+	}
+	return src
 }
 func handlerGroupStr(s string) string {
 	if len(s) <= 1 {

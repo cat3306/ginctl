@@ -29,7 +29,6 @@ const (
 
 var templates = map[string]string{
 	configTemplateFile:          configTemplate,
-	contextTemplateFile:         contextTemplate,
 	etcTemplateFile:             etcTemplate,
 	handlerTemplateFile:         handlerTemplate,
 	logicTemplateFile:           logicTemplate,

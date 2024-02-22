@@ -16,6 +16,7 @@ func genLogic(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error 
 	// raw, _ := json.Marshal(api.Service)
 	// fmt.Printf("%+v\n", string(raw))
 	for _, group := range api.Service.Groups {
+
 		for _, route := range group.Routes {
 			typeName := route.RequestTypeName()
 			err := genFile(fileGenConfig{
