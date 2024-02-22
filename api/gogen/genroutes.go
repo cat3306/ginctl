@@ -65,12 +65,37 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 }
 
 func genRouterSrc(api *spec.ApiSpec) string {
-	srcTmplate := `engine.%s("%s",handler.GinWrapper(new(logic.%s)))`
-	src := ``
-	for _, group := range api.Service.Groups {
-		for _, route := range group.Routes {
-			src += fmt.Sprintf(srcTmplate, strings.ToUpper(route.Method), route.Path, route.Handler) + "\n\n"
-		}
+	srcTmplate := `%s.%s("%s",handler.GinWrapper(new(logic.%s)))`
+	groupTmplate := `
+	%s := engine.Group("%s/")
+	{
+		%s
 	}
-	return src
+	`
+	finalSrc := ``
+	for _, group := range api.Service.Groups {
+		gName := group.GetAnnotation("group")
+		gName = handlerGroupStr(gName)
+		prefix := group.GetAnnotation("prefix")
+		gPrefix := "engine"
+		src := ``
+		if gName != "" && prefix != "" {
+			gPrefix = gName
+		}
+		for _, route := range group.Routes {
+			src += fmt.Sprintf(srcTmplate, gPrefix, strings.ToUpper(route.Method), route.Path, StrFirstLetterUp(route.Handler)) + "\n\n"
+		}
+		if gName != "" && prefix != "" {
+			src = fmt.Sprintf(groupTmplate, gName, prefix, src)
+		}
+		finalSrc += src
+	}
+	return finalSrc
+}
+func handlerGroupStr(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	s = strings.ReplaceAll(s, "/", "")
+	return strings.ToLower(s[:1]) + s[1:]
 }

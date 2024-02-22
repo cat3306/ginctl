@@ -159,3 +159,10 @@ func golangExpr(ty spec.Type, pkg ...string) string {
 
 	return ""
 }
+
+func StrFirstLetterUp(s string) string {
+	if len(s) <= 1 {
+		return ""
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
+}

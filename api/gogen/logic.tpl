@@ -9,14 +9,23 @@ import (
 type {{.handler}} struct {
 }
 
-func (h *{{.handler}}) Req() interface{} {
-	return &types.{{.request}}{}
+func (h *{{.handler}}) Request() interface{} {
+	{{if .isTypeEmpty}}return nil
+	{{else}}return &types.{{.request}}{}{{end}}
 }
+
+func (h *{{.handler}}) Response() interface{} {
+	return &types.{{.response}}{}
+}
+
 func (h *{{.handler}}) HttpMethod() string {
 	return "{{.method}}"
 }
 
 func (h *{{.handler}}) Do(iReq interface{}, ctx *gin.Context) (rsp interface{}, err error) {
-	req := iReq.(*types.{{.request}})
-	return req,nil //delete it!
+	{{if .isTypeEmpty}}
+	{{else}}req := iReq.(*types.{{.request}})
+	_ = req //delete it !
+	{{end}}
+	return 
 }

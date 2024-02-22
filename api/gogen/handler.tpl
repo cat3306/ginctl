@@ -8,7 +8,8 @@ import (
 )
 
 type Handler interface {
-	Req() interface{}
+	Request() interface{}
+	Response() interface{}
 	Do(interface{}, *gin.Context) (interface{}, error)
 	HttpMethod() string
 }
@@ -16,7 +17,7 @@ type Handler interface {
 func GinWrapper(h Handler) gin.HandlerFunc {
 	fName := reflect.Indirect(reflect.ValueOf(h)).Type().Name()
 	return func(c *gin.Context) {
-		req := h.Req()
+		req := h.Request()
 		var err error
 		if req != nil {
 			if h.HttpMethod() == http.MethodPost {
