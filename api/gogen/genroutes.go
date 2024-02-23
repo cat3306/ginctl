@@ -70,7 +70,7 @@ func genRouterSrc(api *spec.ApiSpec) string {
 
 	srcTmplate := `%s.%s("%s",handler.GinWrapper(new(logic.%s)))`
 	groupTmplate := `
-	%s := engine.Group("%s/"%s)
+	%s := engine.Group("%s"%s)
 	{
 		%s
 	}

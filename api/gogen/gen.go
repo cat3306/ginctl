@@ -90,7 +90,6 @@ func DoGenProject(apiFile, dir, style, gomod string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(rootPkg)
 	logx.Must(genEtc(dir, cfg, api))
 	logx.Must(genAppLog(dir, cfg, api))
 	logx.Must(genConfig(dir, cfg, api))
@@ -100,6 +99,7 @@ func DoGenProject(apiFile, dir, style, gomod string) error {
 	logx.Must(genMiddleware(dir, cfg, api))
 	logx.Must(genHandlers(dir, rootPkg, cfg, api))
 	logx.Must(genLogic(dir, rootPkg, cfg, api))
+	logx.Must(genUtil(dir, rootPkg, cfg, api))
 	if err := backupAndSweep(apiFile); err != nil {
 		return err
 	}

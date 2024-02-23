@@ -2,6 +2,8 @@ package gogen
 
 import (
 	_ "embed"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
@@ -13,11 +15,19 @@ var middlewareImplementCode string
 
 func genMiddleware(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 	middlewares := getMiddleware(api)
+	for _, v := range middlewares {
+
+	}
+
+	rmFiles()
 	for _, m := range middlewares {
+		fileName := strings.ToLower(m) + ".go"
+		filename := path.Join(dir, middlewareDir, fileName)
+		os.Remove(filename)
 		err := genFile(fileGenConfig{
 			dir:             routerDir,
 			subdir:          middlewareDir,
-			filename:        strings.ToLower(m) + ".go",
+			filename:        fileName,
 			templateName:    "middlewareImplementCode",
 			category:        category,
 			templateFile:    middlewareImplementCodeFile,

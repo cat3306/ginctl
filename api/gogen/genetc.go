@@ -28,10 +28,11 @@ func genEtc(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 		category:        category,
 		templateFile:    etcTemplateFile,
 		builtinTemplate: etcTemplate,
-		data: map[string]string{
+		data: map[string]any{
 			"serviceName": service.Name,
 			"host":        host,
 			"port":        port,
+			"release":     true,
 		},
 	})
 }

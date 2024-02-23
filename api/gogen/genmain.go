@@ -2,6 +2,9 @@ package gogen
 
 import (
 	_ "embed"
+	"fmt"
+	"os/exec"
+	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
 	"github.com/cat3306/ginctl/config"
@@ -40,7 +43,26 @@ func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
 		builtinTemplate: gomodTemlate,
 		data: map[string]string{
 			"gomod":     rootPkg,
-			"goversion": "1.21.5",
+			"goversion": getGoVersion(),
 		},
 	})
+}
+
+func getGoVersion() string {
+	cmd := exec.Command("go", "version")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	v := string(out)
+	vlist := strings.Split(v, " ")
+	version := ``
+	if len(vlist) >= 3 {
+		version = vlist[2]
+	}
+	if len(version) >= 2 {
+		version = version[2:]
+	}
+	fmt.Println(version)
+	return version
 }

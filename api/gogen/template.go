@@ -25,6 +25,7 @@ const (
 	customRouterTemplateFile    = "customrouter.tpl"
 	rspTemplateFile             = "rsp.tpl"
 	autoRouterTemplateFile      = "autorouter.tpl"
+	utilTemplateFile            = "util.tpl"
 )
 
 var templates = map[string]string{

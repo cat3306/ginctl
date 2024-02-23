@@ -11,4 +11,5 @@ const (
 	routerDir     = "router"
 	typesDir      = "types"
 	middlewareDir = "middleware"
+	utilDir       = "util"
 )

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"text/template"
 
@@ -171,4 +172,25 @@ func StrFirstLetterUp(s string) string {
 		return ""
 	}
 	return strings.ToUpper(s[:1]) + s[1:]
+}
+
+func rmFiles(fs []string) {
+	for _, v := range fs {
+		os.Remove(v)
+	}
+}
+
+func delFiles(oldFiles []string, newFiles []string, dir string) {
+	newMap := make(map[string]struct{})
+	for _, v := range newFiles {
+		newMap[v] = struct{}{}
+	}
+	delList := make([]string, 0)
+	for _, v := range oldFiles {
+		_, ok := newMap[v]
+		if !ok {
+			delList = append(delList, v)
+		}
+	}
+	rmFiles(delList)
 }
