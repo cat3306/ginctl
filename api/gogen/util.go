@@ -183,7 +183,11 @@ func rmFiles(fs []string) {
 }
 
 func delNotExistFiles(newFiles []string, dir string) error {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return nil
+	}
 	var oldFiles []string
+
 	err := filepath.Walk(dir, func(pathStr string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			oldFiles = append(oldFiles, path.Join(dir, info.Name()))

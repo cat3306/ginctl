@@ -16,7 +16,6 @@ require (
 	github.com/zeromicro/antlr v1.0.0
 	github.com/zeromicro/ddl-parser v1.0.5
 	github.com/zeromicro/go-zero v1.6.2
-	github.com/cat3306/ginctl v1.6.2
 	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.61.1
 	google.golang.org/protobuf v1.32.0
