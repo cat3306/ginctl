@@ -3,6 +3,8 @@ package gogen
 import (
 	_ "embed"
 	"fmt"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
@@ -36,11 +38,15 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 	if err != nil {
 		return err
 	}
+
+	autogenFileName := "autogenrouter" + ".go"
 	middlewareList := getMiddleware(api)
+	filename := path.Join(dir, routerDir, autogenFileName)
+	os.Remove(filename)
 	err = genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          routerDir,
-		filename:        "autogenrouter" + ".go",
+		filename:        autogenFileName,
 		templateName:    "autoRouterTemlate",
 		category:        category,
 		templateFile:    autoRouterTemplateFile,

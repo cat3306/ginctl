@@ -2,7 +2,6 @@ package gogen
 
 import (
 	_ "embed"
-	"os"
 	"path"
 	"strings"
 
@@ -15,15 +14,14 @@ var middlewareImplementCode string
 
 func genMiddleware(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 	middlewares := getMiddleware(api)
-	for _, v := range middlewares {
-
-	}
-
-	rmFiles()
+	newFiles := make([]string, 0)
 	for _, m := range middlewares {
 		fileName := strings.ToLower(m) + ".go"
-		filename := path.Join(dir, middlewareDir, fileName)
-		os.Remove(filename)
+		newFiles = append(newFiles, path.Join(dir, middlewareDir, fileName))
+	}
+	delNotExistFiles(newFiles, path.Join(routerDir, middlewareDir))
+	for _, m := range middlewares {
+		fileName := strings.ToLower(m) + ".go"
 		err := genFile(fileGenConfig{
 			dir:             routerDir,
 			subdir:          middlewareDir,

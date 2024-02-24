@@ -2,6 +2,7 @@ package gogen
 
 import (
 	_ "embed"
+	"path"
 	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
@@ -15,6 +16,13 @@ func genLogic(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error 
 
 	// raw, _ := json.Marshal(api.Service)
 	// fmt.Printf("%+v\n", string(raw))
+	var newFiles []string
+	for _, group := range api.Service.Groups {
+		for _, route := range group.Routes {
+			newFiles = append(newFiles, path.Join(dir, logicDir, strings.ToLower(route.Handler)+".go"))
+		}
+	}
+	delNotExistFiles(newFiles, path.Join(dir, logicDir))
 	for _, group := range api.Service.Groups {
 
 		for _, route := range group.Routes {

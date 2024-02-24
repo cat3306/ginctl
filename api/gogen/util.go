@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -180,11 +182,22 @@ func rmFiles(fs []string) {
 	}
 }
 
-func delFiles(oldFiles []string, newFiles []string, dir string) {
+func delNotExistFiles(newFiles []string, dir string) error {
+	var oldFiles []string
+	err := filepath.Walk(dir, func(pathStr string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			oldFiles = append(oldFiles, path.Join(dir, info.Name()))
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 	newMap := make(map[string]struct{})
 	for _, v := range newFiles {
 		newMap[v] = struct{}{}
 	}
+
 	delList := make([]string, 0)
 	for _, v := range oldFiles {
 		_, ok := newMap[v]
@@ -193,4 +206,5 @@ func delFiles(oldFiles []string, newFiles []string, dir string) {
 		}
 	}
 	rmFiles(delList)
+	return nil
 }
