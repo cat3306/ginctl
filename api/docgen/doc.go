@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -22,7 +24,7 @@ func genDoc(api *spec.ApiSpec, dir, filename string) error {
 	if len(api.Service.Routes()) == 0 {
 		return nil
 	}
-
+	os.Remove(path.Join(dir, "", filename))
 	fp, _, err := apiutil.MaybeCreateFile(dir, "", filename)
 	if err != nil {
 		return err

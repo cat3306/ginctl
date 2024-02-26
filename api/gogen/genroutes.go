@@ -9,6 +9,7 @@ import (
 
 	"github.com/cat3306/ginctl/api/spec"
 	"github.com/cat3306/ginctl/config"
+	"github.com/cat3306/ginctl/pkg/golang"
 )
 
 //go:embed router.tpl
@@ -74,7 +75,7 @@ func genRoutes(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error
 
 func genRouterSrc(api *spec.ApiSpec) string {
 
-	srcTmplate := `%s.%s("%s",handler.GinWrapper(new(logic.%s)))`
+	srcTmplate := `%s.%s("%s",handler.GinWrapper(new(logic.%s))) //%s`
 	groupTmplate := `
 	%s := engine.Group("%s"%s)
 	{
@@ -94,7 +95,7 @@ func genRouterSrc(api *spec.ApiSpec) string {
 			gPrefix = gName
 		}
 		for _, route := range group.Routes {
-			src += fmt.Sprintf(srcTmplate, gPrefix, strings.ToUpper(route.Method), route.Path, StrFirstLetterUp(route.Handler)) + "\n\n"
+			src += fmt.Sprintf(srcTmplate, gPrefix, strings.ToUpper(route.Method), route.Path, StrFirstLetterUp(route.Handler), route.JoinedDoc()) + "\n\n"
 		}
 		if gName != "" && prefix != "" {
 			midSrc := joinMiddleware(midd)
@@ -102,6 +103,7 @@ func genRouterSrc(api *spec.ApiSpec) string {
 		}
 		finalSrc += src
 	}
+	finalSrc = golang.FormatCode(finalSrc)
 	return finalSrc
 }
 func joinMiddleware(s string) string {
