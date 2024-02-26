@@ -26,6 +26,10 @@ const (
 	rspTemplateFile             = "rsp.tpl"
 	autoRouterTemplateFile      = "autorouter.tpl"
 	utilTemplateFile            = "util.tpl"
+
+	componentTemplateFile = "component.tpl"
+	gormMysqlTemplateFile = "gorm-mysql.tpl"
+	redisTemplateFile     = "redis.tpl"
 )
 
 var templates = map[string]string{
@@ -36,6 +40,10 @@ var templates = map[string]string{
 	mainTemplateFile:            mainTemplate,
 	middlewareImplementCodeFile: middlewareImplementCode,
 	typesTemplateFile:           typesTemplate,
+
+	componentTemplateFile: componentTemplate,
+	gormMysqlTemplateFile: gormMysqlTemplate,
+	redisTemplateFile:     redisTemplate,
 }
 
 // Category returns the category of the api files.

@@ -27,6 +27,8 @@ var (
 	VarStringBranch string
 	// VarStringStyle describes the style of output files.
 	VarStringStyle string
+	// VarStringComponent describes component such like mysql,redis,es ....etc
+	VarStringComponent string
 )
 
 // CreateServiceCommand fast create service

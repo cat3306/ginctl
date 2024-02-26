@@ -73,6 +73,7 @@ func init() {
 	goCmdFlags.StringVar(&gogen.VarStringRemote, "remote")
 	goCmdFlags.StringVar(&gogen.VarStringBranch, "branch")
 	goCmdFlags.StringVarWithDefaultValue(&gogen.VarStringStyle, "style", config.DefaultFormat)
+	goCmdFlags.StringVarP(&gogen.VarStringComponent, "component", "c")
 
 	javaCmdFlags.StringVar(&javagen.VarStringDir, "dir")
 	javaCmdFlags.StringVar(&javagen.VarStringAPI, "api")
@@ -85,6 +86,7 @@ func init() {
 	newCmdFlags.StringVar(&new.VarStringRemote, "remote")
 	newCmdFlags.StringVar(&new.VarStringBranch, "branch")
 	newCmdFlags.StringVarWithDefaultValue(&new.VarStringStyle, "style", config.DefaultFormat)
+	newCmdFlags.StringVarP(&new.VarStringComponent, "component", "c")
 
 	pluginCmdFlags.StringVarP(&plugin.VarStringPlugin, "plugin", "p")
 	pluginCmdFlags.StringVar(&plugin.VarStringDir, "dir")

@@ -3,6 +3,7 @@
 package router
 
 import (
+	"{{.gomod}}/applog"
 	"{{.gomod}}/config"
 	"fmt"
 
@@ -20,7 +21,9 @@ func StartGinServer() {
 	)
 	CustomRegister(engine)
 	AutoRegister(engine)
-	err := engine.Run(fmt.Sprintf("%s:%s", config.AppConf.Host, config.AppConf.Port))
+	ipAndPort := fmt.Sprintf("%s:%s", config.AppConf.Host, config.AppConf.Port)
+	applog.Logger.Sugar().Infof("Listening and serving HTTP on %s", ipAndPort)
+	err := engine.Run(ipAndPort)
 	if err != nil {
 		panic(err)
 	}

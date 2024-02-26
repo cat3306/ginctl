@@ -15,11 +15,15 @@ const (
 //go:embed etc.tpl
 var etcTemplate string
 
-func genEtc(dir string, cfg *config.Config, api *spec.ApiSpec) error {
+func genEtc(dir string, cfg *config.Config, api *spec.ApiSpec, component string) error {
 	service := api.Service
 	host := "0.0.0.0"
 	port := strconv.Itoa(defaultPort)
-
+	data := genComponentDataMap(component)
+	data["serviceName"] = service.Name
+	data["host"] = host
+	data["port"] = port
+	data["release"] = true
 	return genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          etcDir,
@@ -28,11 +32,6 @@ func genEtc(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 		category:        category,
 		templateFile:    etcTemplateFile,
 		builtinTemplate: etcTemplate,
-		data: map[string]any{
-			"serviceName": service.Name,
-			"host":        host,
-			"port":        port,
-			"release":     true,
-		},
+		data:            data,
 	})
 }

@@ -2,6 +2,7 @@ package gogen
 
 import (
 	_ "embed"
+	"strings"
 
 	"github.com/cat3306/ginctl/api/spec"
 	"github.com/cat3306/ginctl/config"
@@ -18,7 +19,7 @@ var configTemplate string
 //go:embed configtype.tpl
 var configTypeTemplate string
 
-func genConfig(dir string, cfg *config.Config, api *spec.ApiSpec) error {
+func genConfig(dir string, cfg *config.Config, api *spec.ApiSpec, component string) error {
 	filename, err := format.FileNamingFormat(cfg.NamingFormat, configFile)
 	if err != nil {
 		return err
@@ -36,7 +37,7 @@ func genConfig(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 	if err != nil {
 		return err
 	}
-
+	data := genComponentDataMap(component)
 	return genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          configDir,
@@ -45,6 +46,19 @@ func genConfig(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 		category:        category,
 		templateFile:    configTypeTemplateFile,
 		builtinTemplate: configTypeTemplate,
-		data:            map[string]string{},
+		data:            data,
 	})
+}
+
+func genComponentDataMap(component string) map[string]any {
+	r := make(map[string]any)
+	if component == "" {
+		return r
+	}
+	list := strings.Split(component, ",")
+	for _, v := range list {
+		_, ok := componentsMap[v]
+		r[v] = ok
+	}
+	return r
 }

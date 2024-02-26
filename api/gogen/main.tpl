@@ -4,6 +4,7 @@ import (
 	"{{.gomod}}/applog"
 	"{{.gomod}}/config"
 	"{{.gomod}}/router"
+	{{if .hasComponent}}"{{.gomod}}/component"{{end}}
 	"flag"
 
 )
@@ -14,5 +15,11 @@ func main() {
 	flag.Parse()
 	config.Init(file)
 	applog.Init()
+	{{if .hasComponent}}
+	err := component.Init()
+	if err != nil {
+		panic(err)
+	}
+	{{end}}
 	router.StartGinServer()
 }

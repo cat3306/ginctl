@@ -16,7 +16,7 @@ var mainTemplate string
 //go:embed gomod.tpl
 var gomodTemlate string
 
-func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
+func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec, component string) error {
 
 	err := genFile(fileGenConfig{
 		dir:             dir,
@@ -26,8 +26,9 @@ func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
 		category:        category,
 		templateFile:    mainTemplateFile,
 		builtinTemplate: mainTemplate,
-		data: map[string]string{
-			"gomod": rootPkg,
+		data: map[string]any{
+			"gomod":        rootPkg,
+			"hasComponent": component != "",
 		},
 	})
 	if err != nil {
