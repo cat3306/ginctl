@@ -18,7 +18,6 @@ import (
 	"github.com/cat3306/ginctl/kube"
 	"github.com/cat3306/ginctl/migrate"
 	"github.com/cat3306/ginctl/model"
-	"github.com/cat3306/ginctl/quickstart"
 	"github.com/cat3306/ginctl/rpc"
 	"github.com/cat3306/ginctl/tpl"
 	"github.com/cat3306/ginctl/upgrade"
@@ -113,7 +112,7 @@ func init() {
 
 	rootCmd.SetUsageTemplate(usageTpl)
 	rootCmd.AddCommand(api.Cmd, bug.Cmd, docker.Cmd, kube.Cmd, env.Cmd, gateway.Cmd, model.Cmd)
-	rootCmd.AddCommand(migrate.Cmd, quickstart.Cmd, rpc.Cmd, tpl.Cmd, upgrade.Cmd)
+	rootCmd.AddCommand(migrate.Cmd, rpc.Cmd, tpl.Cmd, upgrade.Cmd)
 	rootCmd.Command.AddCommand(cobracompletefig.CreateCompletionSpecCommand())
 	rootCmd.MustInit()
 }
