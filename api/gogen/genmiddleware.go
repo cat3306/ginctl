@@ -12,6 +12,23 @@ import (
 //go:embed middleware.tpl
 var middlewareImplementCode string
 
+var customMiddlewareImplement = `
+package custom
+// middleware custom 
+`
+
+func genCustomMiddleware() error {
+	return genFile(fileGenConfig{
+		dir:             path.Join(routerDir, middlewareDir),
+		subdir:          "custom",
+		filename:        "readme" + ".go",
+		templateName:    "customMiddlewareImplement",
+		category:        category,
+		templateFile:    "",
+		builtinTemplate: customMiddlewareImplement,
+		data:            map[string]string{},
+	})
+}
 func genMiddleware(dir string, cfg *config.Config, api *spec.ApiSpec) error {
 	middlewares := getMiddleware(api)
 	newFiles := make([]string, 0)

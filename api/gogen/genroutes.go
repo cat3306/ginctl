@@ -119,5 +119,6 @@ func handlerGroupStr(s string) string {
 		return s
 	}
 	s = strings.ReplaceAll(s, "/", "")
+	s = strings.Title(s)
 	return strings.ToLower(s[:1]) + s[1:]
 }

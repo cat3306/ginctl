@@ -2,7 +2,6 @@ package gogen
 
 import (
 	_ "embed"
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -64,6 +63,5 @@ func getGoVersion() string {
 	if len(version) >= 2 {
 		version = version[2:]
 	}
-	fmt.Println(version)
 	return version
 }
