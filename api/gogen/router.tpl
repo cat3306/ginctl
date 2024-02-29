@@ -17,7 +17,6 @@ func StartGinServer() {
 	engine := gin.New()
 	engine.Use(
 		gin.Recovery(),
-		gin.Logger(),
 	)
 	CustomRegister(engine)
 	AutoRegister(engine)

@@ -100,7 +100,7 @@ func DoGenProject(apiFile, dir, style, component string) error {
 	logx.Must(genTypes(dir, cfg, api))
 	logx.Must(genRoutes(dir, rootPkg, cfg, api))
 	logx.Must(genMiddleware(dir, cfg, api))
-	logx.Must(genCustomMiddleware())
+	logx.Must(genCustomMiddleware(rootPkg))
 	logx.Must(genHandlers(dir, rootPkg, cfg, api))
 	logx.Must(genLogic(dir, rootPkg, cfg, api))
 	logx.Must(genCustomlogic())
