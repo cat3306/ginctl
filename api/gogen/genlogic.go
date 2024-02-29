@@ -24,9 +24,9 @@ func genLogic(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error 
 	}
 	delNotExistFiles(newFiles, path.Join(dir, logicDir))
 	for _, group := range api.Service.Groups {
-
 		for _, route := range group.Routes {
-			typeName := route.RequestTypeName()
+			reqTypeName := route.RequestTypeName()
+			rspTypeName := route.ResponseTypeName()
 			err := genFile(fileGenConfig{
 				dir:             dir,
 				subdir:          logicDir,
@@ -36,12 +36,14 @@ func genLogic(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error 
 				templateFile:    logicTemplateFile,
 				builtinTemplate: logicTemplate,
 				data: map[string]interface{}{
-					"gomod":       rootPkg,
-					"handler":     StrFirstLetterUp(route.Handler),
-					"method":      strings.ToUpper(route.Method),
-					"request":     StrFirstLetterUp(route.RequestTypeName()),
-					"isTypeEmpty": typeName == "",
-					"response":    StrFirstLetterUp(route.ResponseTypeName()),
+					"gomod":           rootPkg,
+					"handler":         StrFirstLetterUp(route.Handler),
+					"method":          strings.ToUpper(route.Method),
+					"request":         StrFirstLetterUp(route.RequestTypeName()),
+					"isRequestEmpty":  reqTypeName == "",
+					"isResponseEmpty": rspTypeName == "",
+					"reqAndRsp":       reqTypeName == "" && rspTypeName == "",
+					"response":        StrFirstLetterUp(route.ResponseTypeName()),
 				},
 			})
 			if err != nil {

@@ -1,7 +1,8 @@
 package logic
 
 import (
-	"{{.gomod}}/types"
+	{{if .reqAndRsp}}
+	{{else}}"{{.gomod}}/types"{{end}}
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,12 +11,13 @@ type {{.handler}} struct {
 }
 
 func (h *{{.handler}}) Request() interface{} {
-	{{if .isTypeEmpty}}return nil
+	{{if .isRequestEmpty}}return nil
 	{{else}}return &types.{{.request}}{}{{end}}
 }
 
 func (h *{{.handler}}) Response() interface{} {
-	return &types.{{.response}}{}
+	{{if .isResponseEmpty}}return nil
+	{{else}}return &types.{{.response}}{}{{end}}
 }
 
 func (h *{{.handler}}) HttpMethod() string {
@@ -23,7 +25,7 @@ func (h *{{.handler}}) HttpMethod() string {
 }
 
 func (h *{{.handler}}) Do(iReq interface{}, ctx *gin.Context) (rsp interface{}, err error) {
-	{{if .isTypeEmpty}}
+	{{if .isRequestEmpty}}
 	{{else}}req := iReq.(*types.{{.request}})
 	_ = req //delete it !
 	{{end}}
