@@ -1,1 +1,1 @@
-{{if .isTimeAndHasDefaultValue}}`gorm:"column:{{.field}};->" json:"{{.field}}"`{{else}}`gorm:"column:{{.field}}" json:"{{.field}}"`{{end}}
+{{if .isTimeAndHasDefaultValue}}`gorm:"column:{{.field}};<-:false" json:"{{.field}}"`{{else}}`gorm:"column:{{.field}}" json:"{{.field}}"`{{end}}

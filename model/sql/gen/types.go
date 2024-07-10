@@ -47,14 +47,17 @@ func genGormTypes(table Table) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
+	tableName := table.Name.Source()
+	if table.Db.Source() != "" {
+		tableName = table.Db.Source() + "." + table.Name.Source()
+	}
 	output, err := util.With("types").
 		Parse(text).
 		Execute(map[string]any{
 			"upperStartCamelObject": table.Name.ToCamel(),
 			"lowerStartCamelObject": stringx.From(table.Name.ToCamel()).Untitle(),
 			"fields":                fieldsString,
-			"tableName":             table.FullName.Source(),
+			"tableName":             tableName,
 		})
 	if err != nil {
 		return "", err

@@ -230,7 +230,7 @@ func (g *GormGenerator) genModel(in parser.Table) (string, error) {
 	table.UniqueCacheKey = uniqueKey
 	table.ContainsUniqueCacheKey = len(uniqueKey) > 0
 	table.ignoreColumns = g.ignoreColumns
-	importsCode, err := gormGenImports(in.ContainsTime())
+	importsCode, err := gormGenImports(in.HasTime, in.HasSqlNull)
 	if err != nil {
 		return "", err
 	}

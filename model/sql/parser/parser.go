@@ -27,6 +27,8 @@ type (
 		UniqueIndex map[string][]*Field
 		Fields      []*Field
 		ContainsPQ  bool
+		HasTime     bool
+		HasSqlNull  bool
 	}
 
 	// Primary describes a primary key
@@ -46,6 +48,7 @@ type (
 		ContainsPQ      bool
 		HasDefaultValue bool
 		IsTime          bool
+		IsDefaultNull   bool
 	}
 
 	// KeyType types alias of int
@@ -163,7 +166,7 @@ func Parse(filename, database string, strict bool, args ...bool) ([]*Table, erro
 		fullName := stringx.From(e.Name)
 		if database != "" {
 			fullName = stringx.From(database + "." + e.Name)
-		}
+		} 
 		list = append(list, &Table{
 			Name:        stringx.From(e.Name),
 			Db:          stringx.From(database),
@@ -247,6 +250,7 @@ func convertColumns(columns []*parser.Column, primaryColumn string, strict bool)
 		field.Comment = util.TrimNewLine(comment)
 		field.HasDefaultValue = column.Constraint.HasDefaultValue
 		field.IsTime = field.DataType == timeImport
+		field.IsDefaultNull = isDefaultNull
 		if field.Name.Source() == primaryColumn {
 			primaryKey = Primary{
 				Field: field,
@@ -301,11 +305,12 @@ func ConvertDataType(table *model.Table, strict bool, args ...bool) (*Table, err
 		AutoIncrement: strings.Contains(table.PrimaryKey.Extra, "auto_increment"),
 	}
 
-	fieldM, err := getTableFields(table, strict)
+	fieldM, hasTime, hasSqlNull, err := getTableFields(table, strict)
 	if err != nil {
 		return nil, err
 	}
-
+	reply.HasSqlNull = hasSqlNull
+	reply.HasTime = hasTime
 	for _, each := range fieldM {
 		if each.ContainsPQ {
 			reply.ContainsPQ = true
@@ -354,14 +359,18 @@ func ConvertDataType(table *model.Table, strict bool, args ...bool) (*Table, err
 	return &reply, nil
 }
 
-func getTableFields(table *model.Table, strict bool) (map[string]*Field, error) {
+func getTableFields(table *model.Table, strict bool) (map[string]*Field, bool, bool, error) {
 	fieldM := make(map[string]*Field)
+	var (
+		hasTime    bool
+		hasSqlNull bool
+	)
 	for _, each := range table.Columns {
 		isDefaultNull := each.ColumnDefault == nil && each.IsNullAble == "YES"
 		isPrimaryUnsigned := strings.Contains(each.ColumnType, "unsigned")
 		dt, containsPQ, err := converter.ConvertStringDataType(each.DataType, isDefaultNull, isPrimaryUnsigned, strict)
 		if err != nil {
-			return nil, err
+			return nil, false, false, err
 		}
 		columnSeqInIndex := 0
 		if each.Index != nil {
@@ -378,8 +387,11 @@ func getTableFields(table *model.Table, strict bool) (map[string]*Field, error) 
 			ContainsPQ:      containsPQ,
 			HasDefaultValue: each.ColumnDefault != nil,
 			IsTime:          dt == timeImport,
+			IsDefaultNull:   isDefaultNull,
 		}
+		hasTime = field.IsTime || hasTime
+		hasSqlNull = field.IsDefaultNull || hasSqlNull
 		fieldM[each.Name] = field
 	}
-	return fieldM, nil
+	return fieldM, hasTime, hasSqlNull, nil
 }

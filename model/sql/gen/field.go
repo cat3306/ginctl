@@ -88,7 +88,7 @@ func genGormFields(table Table, fields []*parser.Field) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		result = strings.ReplaceAll(result, "time.Time", "JsonTime")
+		//result = strings.ReplaceAll(result, "time.Time", "JsonTime")
 		list = append(list, result)
 	}
 

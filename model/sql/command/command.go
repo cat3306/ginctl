@@ -336,13 +336,22 @@ func fromMysqlDataSource(arg dataSourceArg) error {
 	if len(matchTables) == 0 {
 		return errors.New("no tables matched")
 	}
-
-	generator, err := gen.NewDefaultGenerator(arg.dir, arg.cfg,
-		gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	var (
+		generator gen.Generator
+	)
+	switch arg.mode {
+	case "":
+		generator, err = gen.NewDefaultGenerator(arg.dir, arg.cfg,
+			gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	case "gorm":
+		generator, err = gen.NewGormGenerator(arg.dir, arg.cfg,
+			gen.WithConsoleOption(log), gen.WithIgnoreColumns(arg.ignoreColumns))
+	default:
+		return errors.New("invalid mode only support [gorm]")
+	}
 	if err != nil {
 		return err
 	}
-
 	return generator.StartFromInformationSchema(matchTables, arg.cache, arg.strict)
 }
 
