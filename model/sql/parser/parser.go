@@ -139,13 +139,17 @@ func Parse(filename, database string, strict bool, args ...bool) ([]*Table, erro
 		if err != nil {
 			return nil, err
 		}
-
+		hasTime := false
+		hasSqlNull := false
 		var fields []*Field
 		// sort
 		for indexColumn, c := range columns {
 			field, ok := fieldM[c.Name]
 			if ok {
 				field.NameOriginal = nameOriginals[indexTable][indexColumn]
+				//hasSqlNull=hasSqlNull|| field.
+				hasTime = field.IsTime || hasTime
+				hasSqlNull = field.IsDefaultNull || hasSqlNull
 				fields = append(fields, field)
 			}
 		}
@@ -166,7 +170,7 @@ func Parse(filename, database string, strict bool, args ...bool) ([]*Table, erro
 		fullName := stringx.From(e.Name)
 		if database != "" {
 			fullName = stringx.From(database + "." + e.Name)
-		} 
+		}
 		list = append(list, &Table{
 			Name:        stringx.From(e.Name),
 			Db:          stringx.From(database),
@@ -174,6 +178,8 @@ func Parse(filename, database string, strict bool, args ...bool) ([]*Table, erro
 			UniqueIndex: uniqueIndex,
 			Fields:      fields,
 			FullName:    fullName,
+			HasTime:     hasTime,
+			HasSqlNull:  hasSqlNull,
 		})
 	}
 
