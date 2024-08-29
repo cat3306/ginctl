@@ -14,6 +14,10 @@ func (m *{{.upperStartCamelObject}}) UpdateByPrimary(db *gorm.DB, primary {{.pri
 	return db.Table(m.TableName()).Where("{{.primaryKeyField}} = ?", primary).Updates(m).Error
 }
 
+func (m *{{.upperStartCamelObject}}) UpdateAllFieldByPrimary(db *gorm.DB, primary {{.primaryKeyFieldType}}) error {
+	return db.Table(m.TableName()).Select("*").Where("{{.primaryKeyField}} = ?", primary).Updates(m).Error
+}
+
 func (m *{{.upperStartCamelObject}}) UpdateFieldsByPrimary(db *gorm.DB, primary {{.primaryKeyFieldType}}, fields map[string]interface{}) error {
 	return db.Table(m.TableName()).Where("{{.primaryKeyField}} = ?", primary).Updates(fields).Error
 }
