@@ -35,7 +35,7 @@ func (l*{{.upperStartCamelObject}}List) FindByPrimarys(db *gorm.DB,primarys []{{
     return
 }
 
-func (l*{{.upperStartCamelObject}}List)FindByPage(db *gorm.DB, page int, size int)(total int64, err error){
+func (l*{{.upperStartCamelObject}}List)FindByPageWithTotalCnt(db *gorm.DB, page int, size int)(total int64, err error){
     	if page <= 0 {
     		page = 1
     	}
@@ -51,6 +51,17 @@ func (l*{{.upperStartCamelObject}}List)FindByPage(db *gorm.DB, page int, size in
         err = db.Offset((page - 1) * size).Limit(size).Find(&l).Error
         return
 }
+
+func (l *{{.upperStartCamelObject}}List) FindByPage(db *gorm.DB, page int, size int) error {
+	if page <= 0 {
+		page = 1
+	}
+	if size <= 0 {
+		size = 10
+	}
+	return db.Table({{.upperStartCamelObject}}TName).Offset((page - 1) * size).Limit(size).Find(&l).Error
+}
+
 
 func (l *{{.upperStartCamelObject}}List) Create(db *gorm.DB, batchSize int) error {
 	return db.CreateInBatches(l, batchSize).Error
