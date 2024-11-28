@@ -183,11 +183,12 @@ func (g *GormGenerator) GenMethod(table Table) (string, error) {
 	}
 	camel := table.Name.ToCamel()
 	buffer, err := util.With("create").Parse(text).Execute(map[string]any{
-		"data":                  table,
-		"upperStartCamelObject": camel,
-		"primaryKeyFieldType":   table.PrimaryKey.Field.DataType,
-		"primaryKeyField":       table.PrimaryKey.Field.Name.Source(),
-		"tableName":             table.FullName.Source(),
+		"data":                    table,
+		"upperStartCamelObject":   camel,
+		"primaryKeyFieldType":     table.PrimaryKey.Field.DataType,
+		"primaryKeyField":         table.PrimaryKey.Field.Name.Source(),
+		"tableName":               table.FullName.Source(),
+		"primaryKeyFieldOriginal": table.PrimaryKey.Name.ToCamel(),
 	})
 	if err != nil {
 		return "", err

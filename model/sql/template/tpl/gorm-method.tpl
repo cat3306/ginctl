@@ -5,6 +5,14 @@ func (m *{{.upperStartCamelObject}}) Create(db *gorm.DB) error {
     	return db.Table(m.TableName()).Create(m).Error
 }
 
+func (m *{{.upperStartCamelObject}}) CreateOrUpdate(db *gorm.DB) error {
+    err := db.Table(m.TableName()).Select("{{.primaryKeyField}}").FirstOrCreate(m).Error
+	if err != nil {
+		return err
+	}
+	return m.UpdateAllFieldByPrimary(db, m.{{.primaryKeyFieldOriginal}})
+}
+
 func (m *{{.upperStartCamelObject}}) FindByPrimary(db *gorm.DB,primary {{.primaryKeyFieldType}}) error {
     return IgnoreRecordNotFound(db.Table(m.TableName()).Where(" {{.primaryKeyField}} = ?",primary).Find(m).Error)
 }
